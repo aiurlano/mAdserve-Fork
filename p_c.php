@@ -15,7 +15,8 @@ function MAD_CheckIfSystemInstalled()
     return false;
 }
 
-function MAD_checkSystemInitialRequirements(&$aErrors){
+function MAD_checkSystemInitialRequirements(&$aErrors)
+{
 
     $isSystemOK = true;
     $return = true;
@@ -128,8 +129,8 @@ function MAD_checkSystemInitialRequirements(&$aErrors){
         if (!$memoryCanBeSet) {
             $minimumRequiredMemoryInMB = $minimumRequiredMemory / 1048576;
             $errorMessage = 'The PHP "memory_limit" value is set to less than the required minimum of ' .
-                            $minimumRequiredMemoryInMB . 'MB, but because the built in PHP function "ini_set" ' .
-                            'has been disabled, the memory limit cannot be automatically increased.';
+                $minimumRequiredMemoryInMB . 'MB, but because the built in PHP function "ini_set" ' .
+                'has been disabled, the memory limit cannot be automatically increased.';
             $aErrors[] = $errorMessage;
             $isSystemOK = false;
             if ($return === true) {
@@ -137,7 +138,7 @@ function MAD_checkSystemInitialRequirements(&$aErrors){
             }
         }
     }
-    
+
     // Check magic_quotes_runtime and try to unset it
     $GLOBALS['original_get_magic_quotes_runtime'] = MAD_getMagicQuotesRuntime();
     if ($GLOBALS['original_get_magic_quotes_runtime']) {

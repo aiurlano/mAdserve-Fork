@@ -5,8 +5,8 @@
  */
 function setupConfigVariables()
 {
-	$GLOBALS['_MAX']['CONF'] = parseIniFile();
-	}
+    $GLOBALS['_MAX']['CONF'] = parseIniFile();
+}
 
 /**
  * A function to initialize $_SERVER variables which could be missing
@@ -37,7 +37,7 @@ function setupDeliveryConfigVariables()
         define('MAD_PATH', MAX_PATH);
     }
     // Ensure that the initialisation has not been run before
-    if ( !(isset($GLOBALS['_MAX']['CONF']))) {
+    if (!(isset($GLOBALS['_MAX']['CONF']))) {
         // Parse the Max configuration file
         $GLOBALS['_MAX']['CONF'] = parseDeliveryIniFile();
     }
@@ -58,7 +58,7 @@ function MAD_getHostName()
         $host = $host[0];
     } else if (!empty($_SERVER['SERVER_NAME'])) {
         $host = explode(':', $_SERVER['SERVER_NAME']);
-    	$host = $host[0];
+        $host = $host[0];
     }
     return $host;
 }
@@ -73,7 +73,7 @@ function MAD_getHostNameWithPort()
     if (!empty($_SERVER['HTTP_HOST'])) {
         $host = $_SERVER['HTTP_HOST'];
     } else if (!empty($_SERVER['SERVER_NAME'])) {
-    	$host = $_SERVER['SERVER_NAME'];
+        $host = $_SERVER['SERVER_NAME'];
     }
     return $host;
 }

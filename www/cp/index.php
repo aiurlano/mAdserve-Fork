@@ -7,12 +7,10 @@ require_once MAD_PATH . '/www/cp/auth.php';
 
 require_once MAD_PATH . '/functions/adminredirect.php';
 
-if (logincheck()){
-MAD_Admin_Redirect::redirect('dashboard.php');
-}
-else
-{
-MAD_Admin_Redirect::redirect('signin.php');	
+if (logincheck()) {
+    MAD_Admin_Redirect::redirect('dashboard.php');
+} else {
+    MAD_Admin_Redirect::redirect('signin.php');
 }
 
 ?>

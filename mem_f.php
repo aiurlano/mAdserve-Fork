@@ -10,7 +10,8 @@ function MAD_getMinimumRequiredMemory($limit = null)
  * @return integer The memory_limit value set in PHP, in bytes
  *                 (or -1, if no limit).
  */
-function MAD_getMemoryLimitSizeInBytes() {
+function MAD_getMemoryLimitSizeInBytes()
+{
     $phpMemoryLimit = ini_get('memory_limit');
     if (empty($phpMemoryLimit) || $phpMemoryLimit == -1) {
         // No memory limit
@@ -22,7 +23,7 @@ function MAD_getMemoryLimitSizeInBytes() {
         'K' => 1024
     );
     $phpMemoryLimitInBytes = $phpMemoryLimit;
-    foreach($aSize as $type => $multiplier) {
+    foreach ($aSize as $type => $multiplier) {
         $pos = strpos($phpMemoryLimit, $type);
         if (!$pos) {
             $pos = strpos($phpMemoryLimit, strtolower($type));
@@ -63,7 +64,8 @@ function MAD_checkMemoryCanBeSet()
  *                 supplied, or if the attempt to set a larger memory_limit was
  *                 successful; false otherwise.
  */
-function MAD_increaseMemoryLimit($setMemory) {
+function MAD_increaseMemoryLimit($setMemory)
+{
     $phpMemoryLimitInBytes = MAD_getMemoryLimitSizeInBytes();
     if ($phpMemoryLimitInBytes == -1) {
         // Memory is unlimited

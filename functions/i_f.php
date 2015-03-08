@@ -1,294 +1,299 @@
 <?php
 
-function php_cache_compatibility_check(){
-	
-if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-return true;
-}
+function php_cache_compatibility_check()
+{
 
-return false;
-	
-}
+    if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+        return true;
+    }
 
-function check_server(){
-
-if (!check_writeable(MAD_PATH . '/conf/')){
-return false;	
-}
-
-if (!check_writeable(MAD_PATH . '/data/creative/')){
-return false;	
-}
-
-if (!check_xml()){
-return false;	
-}
-
-if (!check_mbstring()){
-return false;	
-}
-
-
-return true;
+    return false;
 
 }
 
-function check_writeable($dir){
-if (is_writable($dir)){
-	return true;
-}
-return false;
-}
+function check_server()
+{
 
-function step_check($step){
-if ($step>1 && !check_server()){
-echo "Server check failed. Please re-start installation."; exit;	
-}
-}
+    if (!check_writeable(MAD_PATH . '/conf/')) {
+        return false;
+    }
 
-function check_mbstring(){
-if(extension_loaded("mbstring")){
-return true;
-}
-return false;
-}
+    if (!check_writeable(MAD_PATH . '/data/creative/')) {
+        return false;
+    }
 
-function check_xml(){
-if(extension_loaded("SimpleXML")){
-return true;
-}
-else if (function_exists('simplexml_load_file')){
-return true;
-}else{
-return false;
-}	
-}
+    if (!check_xml()) {
+        return false;
+    }
 
-function verify_main_config($data){
-
-if (empty($data['server_name']) or empty($data['admin_firstname']) or empty($data['admin_lastname']) or empty($data['admin_email']) or empty($data['admin_pass']) or empty($data['admin_pass2'])){
-global $errormessage;
-$errormessage='Some fields are missing. Please fill all required fields.';
-global $editdata;
-$editdata=$data;
-return false;
-}
-
-if ($data['admin_pass']!=$data['admin_pass2']){
-global $errormessage;
-$errormessage='The passwords you entered to not match.';
-global $editdata;
-$editdata=$data;
-return false;
-}
-
-require_once MAD_PATH . '/modules/validation/validate.class.php';
-
-$validate = new Validate;
-
-if (($validate->isEmail($data['admin_email'])!=true)){
-global $errormessage;
-$errormessage='Please enter a valid e-mail address.';
-global $editdata;
-$editdata=$data;
-return false;
-}
-
-	
-	return true;
-	}
-	
-	function verify_db_config($data){
-		
-error_reporting(0);
-		
-if (empty($data['db_host']) or empty($data['db_name']) or empty($data['db_user'])){
-global $errormessage;
-$errormessage='Some fields are missing. Please fill all required fields.';
-global $editdata;
-$editdata=$data;
-return false;
-}
-
-$repdb=mysql_connect($data['db_host'], $data['db_user'], $data['db_pass']);
-
-if (!$repdb){
-global $errormessage;
-$errormessage='Unable to connect to database. Please double check database details. Error #1';
-global $editdata;
-$editdata=$data;
-return false;	
-}
-
-if (!mysql_select_db ($data['db_name'], $repdb)){
-global $errormessage;
-$errormessage='Unable to connect to database. Please double check database details. Error #2';
-global $editdata;
-$editdata=$data;
-return false;		
-}
-
-return true;
-		
-	}
-	
-	function check_mf($data){
-		
-if (!isset($data['mobfox_connect_type']) or ($data['mobfox_connect_type']!=1 && $data['mobfox_connect_type']!=2)){
-	global $errormessage;
-$errormessage="Please tell us if you would like to use your existing account for MobFox:Connect, or if you'd like to create a new one.";
-global $editdata;
-$editdata=$data;
-return false;
-}
-
-if ($data['mobfox_connect_type']==1){
-	
-	
-if (empty($data['mf_user']) or empty($data['mf_pass'])){
-global $errormessage;
-$errormessage="Please enter your MobFox User Name and Password.";
-global $editdata;
-$editdata=$data;
-return false;	
-}
-
-if (!mfconcheck($data['mf_user'], md5($data['mf_pass']), 0)){
-global $errormessage;
-$errormessage="Unable to validate your MobFox login credentials. Please try again.";
-global $editdata;
-$editdata=$data;
-return false;		
-}
-	
-}
-
-else if ($data['mobfox_connect_type']==2){
-	
-if (empty($data['mf_email']) or empty($data['mf_password']) or empty($data['mf_password2']) or empty($data['mf_first_name']) or empty($data['mf_last_name'])){
-global $errormessage;
-$errormessage="Please enter all required fields.";
-global $editdata;
-$editdata=$data;
-return false;	
-}
-
-if ($data['mf_password']!=$data['mf_password2']){
-global $errormessage;
-$errormessage='The passwords you entered to not match.';
-global $editdata;
-$editdata=$data;
-return false;
-}
-
-if (!c_m_f($data)){
-global $errormessage;
-global $editdata;
-$editdata=$data;
-return false;	
-}
-	
-	
-}
+    if (!check_mbstring()) {
+        return false;
+    }
 
 
-if (finalize_install($data)){
-return true;	
-}
-else {
-global $errormessage;
-global $editdata;
-$editdata=$data;
-return false;			
+    return true;
+
 }
 
-	
-	}
-	
-	
-function c_m_f($data){
+function check_writeable($dir)
+{
+    if (is_writable($dir)) {
+        return true;
+    }
+    return false;
+}
 
-require_once MAD_PATH . '/modules/http/class.http.php';
+function step_check($step)
+{
+    if ($step > 1 && !check_server()) {
+        echo "Server check failed. Please re-start installation.";
+        exit;
+    }
+}
+
+function check_mbstring()
+{
+    if (extension_loaded("mbstring")) {
+        return true;
+    }
+    return false;
+}
+
+function check_xml()
+{
+    if (extension_loaded("SimpleXML")) {
+        return true;
+    } else if (function_exists('simplexml_load_file')) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function verify_main_config($data)
+{
+
+    if (empty($data['server_name']) or empty($data['admin_firstname']) or empty($data['admin_lastname']) or empty($data['admin_email']) or empty($data['admin_pass']) or empty($data['admin_pass2'])) {
+        global $errormessage;
+        $errormessage = 'Some fields are missing. Please fill all required fields.';
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
+
+    if ($data['admin_pass'] != $data['admin_pass2']) {
+        global $errormessage;
+        $errormessage = 'The passwords you entered to not match.';
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
+
+    require_once MAD_PATH . '/modules/validation/validate.class.php';
+
+    $validate = new Validate;
+
+    if (($validate->isEmail($data['admin_email']) != true)) {
+        global $errormessage;
+        $errormessage = 'Please enter a valid e-mail address.';
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
+
+
+    return true;
+}
+
+function verify_db_config($data)
+{
+
+    error_reporting(0);
+
+    if (empty($data['db_host']) or empty($data['db_name']) or empty($data['db_user'])) {
+        global $errormessage;
+        $errormessage = 'Some fields are missing. Please fill all required fields.';
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
+
+    $repdb = mysql_connect($data['db_host'], $data['db_user'], $data['db_pass']);
+
+    if (!$repdb) {
+        global $errormessage;
+        $errormessage = 'Unable to connect to database. Please double check database details. Error #1';
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
+
+    if (!mysql_select_db($data['db_name'], $repdb)) {
+        global $errormessage;
+        $errormessage = 'Unable to connect to database. Please double check database details. Error #2';
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
+
+    return true;
+
+}
+
+function check_mf($data)
+{
+
+    if (!isset($data['mobfox_connect_type']) or ($data['mobfox_connect_type'] != 1 && $data['mobfox_connect_type'] != 2)) {
+        global $errormessage;
+        $errormessage = "Please tell us if you would like to use your existing account for MobFox:Connect, or if you'd like to create a new one.";
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
+
+    if ($data['mobfox_connect_type'] == 1) {
+
+
+        if (empty($data['mf_user']) or empty($data['mf_pass'])) {
+            global $errormessage;
+            $errormessage = "Please enter your MobFox User Name and Password.";
+            global $editdata;
+            $editdata = $data;
+            return false;
+        }
+
+        if (!mfconcheck($data['mf_user'], md5($data['mf_pass']), 0)) {
+            global $errormessage;
+            $errormessage = "Unable to validate your MobFox login credentials. Please try again.";
+            global $editdata;
+            $editdata = $data;
+            return false;
+        }
+
+    } else if ($data['mobfox_connect_type'] == 2) {
+
+        if (empty($data['mf_email']) or empty($data['mf_password']) or empty($data['mf_password2']) or empty($data['mf_first_name']) or empty($data['mf_last_name'])) {
+            global $errormessage;
+            $errormessage = "Please enter all required fields.";
+            global $editdata;
+            $editdata = $data;
+            return false;
+        }
+
+        if ($data['mf_password'] != $data['mf_password2']) {
+            global $errormessage;
+            $errormessage = 'The passwords you entered to not match.';
+            global $editdata;
+            $editdata = $data;
+            return false;
+        }
+
+        if (!c_m_f($data)) {
+            global $errormessage;
+            global $editdata;
+            $editdata = $data;
+            return false;
+        }
+
+
+    }
+
+
+    if (finalize_install($data)) {
+        return true;
+    } else {
+        global $errormessage;
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
+
+
+}
+
+
+function c_m_f($data)
+{
+
+    require_once MAD_PATH . '/modules/http/class.http.php';
 
 
 // Instantiate it
-$http = new Http();
+    $http = new Http();
 
-$http->execute('http://api.mobfox.com/createAccount/MADSERVE&email_address='.$data['mf_email'].'&password='.$data['mf_password'].'&first_name='.$data['mf_first_name'].'&last_name='.$data['mf_last_name'].'&phone_number='.$data['mf_phone'].'&portal=MADSERVE');
+    $http->execute('http://api.mobfox.com/createAccount/MADSERVE&email_address=' . $data['mf_email'] . '&password=' . $data['mf_password'] . '&first_name=' . $data['mf_first_name'] . '&last_name=' . $data['mf_last_name'] . '&phone_number=' . $data['mf_phone'] . '&portal=MADSERVE');
 
-if ($http->error){
-return false;
+    if ($http->error) {
+        return false;
+    }
+
+    try {
+        $xml_response = new SimpleXmlElement($http->result, LIBXML_NOCDATA);
+    } catch (Exception $e) {
+        // handle the error
+        return false;
+    }
+
+    if (isset($xml_response['status']) && $xml_response['status'] == 'error') {
+        global $errormessage;
+        $errormessage = $xml_response->error;
+        global $editdata;
+        $editdata = $data;
+        return false;
+    } else if (isset($xml_response['status']) && $xml_response['status'] == 'success') {
+        return true;
+    } else {
+        global $errormessage;
+        $errormessage = 'Unknown Error while trying to create your MobFox account. Please try again in a few minutes';
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
+
 }
 
-try {
-$xml_response = new SimpleXmlElement($http->result, LIBXML_NOCDATA);
-} catch (Exception $e) {
-   // handle the error
-return false;
-}
+function finalize_install($data)
+{
 
-if (isset($xml_response['status']) && $xml_response['status']=='error') {
-global $errormessage;
-$errormessage=$xml_response->error;
-global $editdata;
-$editdata=$data;
-return false;
-}
+    if (!$basic_config = read_config(MAD_PATH . '/conf/INSTALLTEMP_MAINCONFIG')) {
+        global $errormessage;
+        $errormessage = 'Could not read from temporary Installation configuration file. Please check /conf/ directory read permissions and try again.';
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
 
-else if (isset($xml_response['status']) && $xml_response['status']=='success') {
-return true;
-}
-else {
-global $errormessage;
-$errormessage='Unknown Error while trying to create your MobFox account. Please try again in a few minutes';
-global $editdata;
-$editdata=$data;
-return false;	
-}
-		
-	}
-	
-function finalize_install($data){
-	
-if (!$basic_config=read_config(MAD_PATH . '/conf/INSTALLTEMP_MAINCONFIG')){
-global $errormessage;
-$errormessage='Could not read from temporary Installation configuration file. Please check /conf/ directory read permissions and try again.';
-global $editdata;
-$editdata=$data;
-return false;		
-}
+    if (!$db_config = read_config(MAD_PATH . '/conf/INSTALLTEMP_DBCONFIG')) {
+        global $errormessage;
+        $errormessage = 'Could not read from temporary Installation DB configuration file. Please check /conf/ directory read permissions and try again.';
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
 
-if (!$db_config=read_config(MAD_PATH . '/conf/INSTALLTEMP_DBCONFIG')){
-global $errormessage;
-$errormessage='Could not read from temporary Installation DB configuration file. Please check /conf/ directory read permissions and try again.';
-global $editdata;
-$editdata=$data;
-return false;		
-}
-
-$mad_basic_configuration=unserialize($basic_config);
-$mad_db_configuration=unserialize($db_config);
+    $mad_basic_configuration = unserialize($basic_config);
+    $mad_db_configuration = unserialize($db_config);
 
 
-$maindb=mysql_connect($mad_db_configuration['db_host'], $mad_db_configuration['db_user'], $mad_db_configuration['db_pass']);
+    $maindb = mysql_connect($mad_db_configuration['db_host'], $mad_db_configuration['db_user'], $mad_db_configuration['db_pass']);
 
-if (!$maindb){
-global $errormessage;
-$errormessage='Unable to connect to database. Please double check database details. Error #1';
-global $editdata;
-$editdata=$data;
-return false;	
-}
+    if (!$maindb) {
+        global $errormessage;
+        $errormessage = 'Unable to connect to database. Please double check database details. Error #1';
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
 
-if (!mysql_select_db ($mad_db_configuration['db_name'], $maindb)){
-global $errormessage;
-$errormessage='Unable to connect to database. Please double check database details. Error #2';
-global $editdata;
-$editdata=$data;
-return false;		
-}
+    if (!mysql_select_db($mad_db_configuration['db_name'], $maindb)) {
+        global $errormessage;
+        $errormessage = 'Unable to connect to database. Please double check database details. Error #2';
+        global $editdata;
+        $editdata = $data;
+        return false;
+    }
 
-mysql_query("CREATE TABLE IF NOT EXISTS `md_ad_units` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_ad_units` (
   `adv_id` int(11) NOT NULL auto_increment,
   `campaign_id` varchar(100) NOT NULL,
   `unit_hash` varchar(100) NOT NULL,
@@ -310,7 +315,7 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_ad_units` (
   KEY `campaign_id` (`campaign_id`,`adv_status`,`adv_height`,`adv_width`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
 
-mysql_query("CREATE TABLE IF NOT EXISTS `md_campaigns` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_campaigns` (
   `campaign_id` int(11) NOT NULL auto_increment,
   `campaign_owner` varchar(100) NOT NULL,
   `campaign_status` varchar(100) NOT NULL,
@@ -339,7 +344,7 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_campaigns` (
   `device_target` varchar(1) NOT NULL,
   PRIMARY KEY  (`campaign_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_campaign_limit` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_campaign_limit` (
   `entry_id` int(11) NOT NULL auto_increment,
   `campaign_id` varchar(100) NOT NULL,
   `cap_type` varchar(100) NOT NULL,
@@ -349,19 +354,19 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_campaign_limit` (
   PRIMARY KEY  (`entry_id`),
   KEY `campaign_id` (`campaign_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_campaign_priorities` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_campaign_priorities` (
   `entry_id` int(11) NOT NULL auto_increment,
   `priority_id` varchar(100) NOT NULL,
   `priority_name` varchar(100) NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;", $maindb);
-mysql_query("INSERT INTO `md_campaign_priorities` (`entry_id`, `priority_id`, `priority_name`) VALUES
+    mysql_query("INSERT INTO `md_campaign_priorities` (`entry_id`, `priority_id`, `priority_name`) VALUES
 (1, '1', '1 - Lowest'),
 (2, '2', '2 - Low'),
 (3, '3', '3 - Medium'),
 (4, '4', '4 - High'),
 (5, '5', '5 - Highest');", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_campaign_targeting` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_campaign_targeting` (
   `entry_id` int(11) NOT NULL auto_increment,
   `campaign_id` int(11) NOT NULL,
   `targeting_type` varchar(100) NOT NULL,
@@ -370,13 +375,13 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_campaign_targeting` (
   KEY `s2` (`campaign_id`),
   KEY `s1` (`targeting_type`,`targeting_code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_channels` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_channels` (
   `channel_id` int(11) NOT NULL auto_increment,
   `channel_type` varchar(100) NOT NULL,
   `channel_name` varchar(100) NOT NULL,
   PRIMARY KEY  (`channel_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;", $maindb);
-mysql_query("INSERT INTO `md_channels` (`channel_id`, `channel_type`, `channel_name`) VALUES
+    mysql_query("INSERT INTO `md_channels` (`channel_id`, `channel_type`, `channel_name`) VALUES
 (1, '1', 'Finance'),
 (2, '1', 'IT'),
 (3, '1', 'Business'),
@@ -387,23 +392,23 @@ mysql_query("INSERT INTO `md_channels` (`channel_id`, `channel_type`, `channel_n
 (9, '1', 'Information'),
 (10, '1', 'Community'),
 (11, '1', 'Women');", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_code_snippets` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_code_snippets` (
   `entry_id` int(11) NOT NULL auto_increment,
   `snippet_name` varchar(100) NOT NULL,
   `snippet_file` varchar(100) NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;", $maindb);
-mysql_query("INSERT INTO `md_code_snippets` (`entry_id`, `snippet_name`, `snippet_file`) VALUES
+    mysql_query("INSERT INTO `md_code_snippets` (`entry_id`, `snippet_name`, `snippet_file`) VALUES
 (1, 'JavaScript', 'javascript.txt'),
 (2, 'PHP cURL', 'phpcurl.txt');", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_configuration` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_configuration` (
   `entry_id` int(11) NOT NULL auto_increment,
   `var_name` varchar(200) NOT NULL,
   `var_value` varchar(200) NOT NULL,
   PRIMARY KEY  (`entry_id`),
   UNIQUE KEY `var_name` (`var_name`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_creative_servers` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_creative_servers` (
   `entry_id` int(11) NOT NULL auto_increment,
   `server_type` varchar(255) NOT NULL,
   `server_name` varchar(255) NOT NULL,
@@ -416,20 +421,20 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_creative_servers` (
   `server_status` varchar(1) NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;", $maindb);
-mysql_query("INSERT INTO `md_creative_servers` (`entry_id`, `server_type`, `server_name`, `remote_host`, `remote_port`, `remote_user`, `remote_password`, `remote_directory`, `server_default_url`, `server_status`) VALUES
+    mysql_query("INSERT INTO `md_creative_servers` (`entry_id`, `server_type`, `server_name`, `remote_host`, `remote_port`, `remote_user`, `remote_password`, `remote_directory`, `server_default_url`, `server_status`) VALUES
 (1, 'local', 'Local Creative Server', 'n/a', '', '', '', '', '', '');", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_log_types` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_log_types` (
   `entry_id` int(11) NOT NULL auto_increment,
   `log_id` varchar(100) NOT NULL,
   `log_name` longtext NOT NULL,
   `log_desc` longtext NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;", $maindb);
-mysql_query("INSERT INTO `md_log_types` (`entry_id`, `log_id`, `log_name`, `log_desc`) VALUES
+    mysql_query("INSERT INTO `md_log_types` (`entry_id`, `log_id`, `log_name`, `log_desc`) VALUES
 (1, 'daily_cron', 'mAdserve Daily Cron Job', 'Daily cron job ran successfully.'),
 (2, 'system_install', 'mAdserve Installation', 'mAdserve was installed successfully'),
 (3, 'campaign_limit_update', 'Campaign Limits Reset', 'Daily Campaign Impression Caps have successfully been reset.');", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_networks` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_networks` (
   `entry_id` int(11) NOT NULL auto_increment,
   `network_name` varchar(100) NOT NULL,
   `network_logo` varchar(100) NOT NULL,
@@ -450,7 +455,7 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_networks` (
   PRIMARY KEY  (`entry_id`),
   KEY `network_identifier` (`network_identifier`(6))
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_network_config` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_network_config` (
   `entry_id` int(11) NOT NULL auto_increment,
   `config_type` varchar(100) NOT NULL,
   `publication_id` varchar(100) NOT NULL,
@@ -464,7 +469,7 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_network_config` (
   PRIMARY KEY  (`entry_id`),
   KEY `pub_sel` (`publication_id`,`zone_id`,`network_id`,`priority`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_passwordresets` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_passwordresets` (
   `entry_id` int(11) NOT NULL auto_increment,
   `reset_status` varchar(100) NOT NULL,
   `reset_hash` varchar(100) NOT NULL,
@@ -473,13 +478,13 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_passwordresets` (
   `time_stamp` varchar(100) NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_pending_actions` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_pending_actions` (
   `entry_id` int(11) NOT NULL auto_increment,
   `action_id` varchar(100) NOT NULL,
   `action_detail` longtext NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_publications` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_publications` (
   `inv_id` int(11) NOT NULL auto_increment,
   `creator_id` varchar(100) NOT NULL,
   `inv_status` varchar(100) NOT NULL,
@@ -491,7 +496,7 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_publications` (
   `md_lastrequest` varchar(100) NOT NULL,
   PRIMARY KEY  (`inv_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_publication_types` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_publication_types` (
   `entry_id` int(11) NOT NULL auto_increment,
   `pub_identification` varchar(100) NOT NULL,
   `pub_name` varchar(100) NOT NULL,
@@ -503,11 +508,11 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_publication_types` (
   `code_type` varchar(100) NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;", $maindb);
-mysql_query("INSERT INTO `md_publication_types` (`entry_id`, `pub_identification`, `pub_name`, `pub_description`, `pub_sdk_url`, `pub_info_content`, `pub_icon`, `output_type`, `code_type`) VALUES
+    mysql_query("INSERT INTO `md_publication_types` (`entry_id`, `pub_identification`, `pub_name`, `pub_description`, `pub_sdk_url`, `pub_info_content`, `pub_icon`, `output_type`, `code_type`) VALUES
 (1, 'ios_app', 'iOS Application', 'iOS Application', 'http://www.madserve.org/ios-latest', '', 'ios.png', 'xml', 'sdk'),
 (2, 'android_app', 'Android Application', 'Android Application', 'http://www.madserve.org/android-latest', '', 'android.png', 'xml', 'sdk'),
 (3, 'mobileweb', 'Mobile Website', 'Mobile Website', '', '', 'web.png', 'html', 'standard_code');", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_regional_targeting` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_regional_targeting` (
   `entry_id` int(11) NOT NULL auto_increment,
   `targeting_code` varchar(100) NOT NULL,
   `targeting_type` varchar(100) NOT NULL,
@@ -519,7 +524,7 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_regional_targeting` (
   `entry_status` varchar(100) NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8521 ;", $maindb);
-mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, `targeting_type`, `region_code`, `region_name`, `head_country`, `head_region`, `head_city`, `entry_status`) VALUES
+    mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, `targeting_type`, `region_code`, `region_name`, `head_country`, `head_region`, `head_city`, `entry_status`) VALUES
 (1, 'AT', 'COUNTRY', 'AT', 'Austria', '', '', '', '1'),
 (2, 'AT_01', 'REGION', '01', 'Burgenland', 'AT', '', '', '1'),
 (3, 'AT_02', 'REGION', '02', 'Karnten', 'AT', '', '', '1'),
@@ -1328,7 +1333,7 @@ mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, 
 (6453, 'LK_25', 'REGION', '25', 'Jaffna', 'LK', '', '', '1'),
 (6452, 'LK_24', 'REGION', '24', 'Gampaha', 'LK', '', '', '1'),
 (6451, 'LK_23', 'REGION', '23', 'Colombo', 'LK', '', '', '1');", $maindb);
-mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, `targeting_type`, `region_code`, `region_name`, `head_country`, `head_region`, `head_city`, `entry_status`) VALUES
+    mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, `targeting_type`, `region_code`, `region_name`, `head_country`, `head_region`, `head_city`, `entry_status`) VALUES
 (6450, 'LK_21', 'REGION', '21', 'Trincomalee', 'LK', '', '', '1'),
 (6449, 'LK_20', 'REGION', '20', 'Ratnapura', 'LK', '', '', '1'),
 (6448, 'LK_19', 'REGION', '19', 'Puttalam', 'LK', '', '', '1'),
@@ -2107,7 +2112,7 @@ mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, 
 (5675, 'GB_V8', 'REGION', 'V8', 'North Lanarkshire', 'GB', '', '', '1'),
 (5674, 'GB_V7', 'REGION', 'V7', 'North Ayrshire', 'GB', '', '', '1'),
 (5673, 'GB_V6', 'REGION', 'V6', 'Moray', 'GB', '', '', '1');", $maindb);
-mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, `targeting_type`, `region_code`, `region_name`, `head_country`, `head_region`, `head_city`, `entry_status`) VALUES
+    mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, `targeting_type`, `region_code`, `region_name`, `head_country`, `head_region`, `head_city`, `entry_status`) VALUES
 (5672, 'GB_V5', 'REGION', 'V5', 'Midlothian', 'GB', '', '', '1'),
 (5671, 'GB_V4', 'REGION', 'V4', 'Inverclyde', 'GB', '', '', '1'),
 (5670, 'GB_V3', 'REGION', 'V3', 'Highland', 'GB', '', '', '1'),
@@ -2891,7 +2896,7 @@ mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, 
 (4892, 'BS_35', 'REGION', '35', 'San Salvador and Rum Cay', 'BS', '', '', '1'),
 (4891, 'BS_34', 'REGION', '34', 'Sandy Point', 'BS', '', '', '1'),
 (4890, 'BS_33', 'REGION', '33', 'Rock Sound', 'BS', '', '', '1');", $maindb);
-mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, `targeting_type`, `region_code`, `region_name`, `head_country`, `head_region`, `head_city`, `entry_status`) VALUES
+    mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, `targeting_type`, `region_code`, `region_name`, `head_country`, `head_region`, `head_city`, `entry_status`) VALUES
 (4889, 'BS_32', 'REGION', '32', 'Nichollstown and Berry Islands', 'BS', '', '', '1'),
 (4888, 'BS_31', 'REGION', '31', 'Marsh Harbour', 'BS', '', '', '1'),
 (4887, 'BS_30', 'REGION', '30', 'Kemps Bay', 'BS', '', '', '1'),
@@ -3691,7 +3696,7 @@ mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, 
 (7292, 'PH_71', 'REGION', '71', 'Sultan Kudarat', 'PH', '', '', '1'),
 (7293, 'PH_72', 'REGION', '72', 'Tawitawi', 'PH', '', '', '1'),
 (7294, 'PH_A1', 'REGION', 'A1', 'Angeles', 'PH', '', '', '1');", $maindb);
-mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, `targeting_type`, `region_code`, `region_name`, `head_country`, `head_region`, `head_city`, `entry_status`) VALUES
+    mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, `targeting_type`, `region_code`, `region_name`, `head_country`, `head_region`, `head_city`, `entry_status`) VALUES
 (7295, 'PH_A2', 'REGION', 'A2', 'Bacolod', 'PH', '', '', '1'),
 (7296, 'PH_A3', 'REGION', 'A3', 'Bago', 'PH', '', '', '1'),
 (7297, 'PH_A4', 'REGION', 'A4', 'Baguio', 'PH', '', '', '1'),
@@ -4485,7 +4490,7 @@ mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, 
 (8085, 'TR_17', 'REGION', '17', 'Canakkale', 'TR', '', '', '1'),
 (8086, 'TR_19', 'REGION', '19', 'Corum', 'TR', '', '', '1'),
 (8087, 'TR_20', 'REGION', '20', 'Denizli', 'TR', '', '', '1');", $maindb);
-mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, `targeting_type`, `region_code`, `region_name`, `head_country`, `head_region`, `head_city`, `entry_status`) VALUES
+    mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, `targeting_type`, `region_code`, `region_name`, `head_country`, `head_region`, `head_city`, `entry_status`) VALUES
 (8088, 'TR_21', 'REGION', '21', 'Diyarbakir', 'TR', '', '', '1'),
 (8089, 'TR_22', 'REGION', '22', 'Edirne', 'TR', '', '', '1'),
 (8090, 'TR_23', 'REGION', '23', 'Elazig', 'TR', '', '', '1'),
@@ -4919,7 +4924,7 @@ mysql_query("INSERT INTO `md_regional_targeting` (`entry_id`, `targeting_code`, 
 (8518, 'ZW_08', 'REGION', '08', 'Masvingo', 'ZW', '', '', '1'),
 (8519, 'ZW_09', 'REGION', '09', 'Bulawayo', 'ZW', '', '', '1'),
 (8520, 'ZW_10', 'REGION', '10', 'Harare', 'ZW', '', '', '1');", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_reporting` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_reporting` (
   `entry_id` int(11) NOT NULL auto_increment,
   `type` varchar(100) NOT NULL,
   `time_stamp` varchar(100) NOT NULL,
@@ -4940,7 +4945,7 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_reporting` (
   PRIMARY KEY  (`entry_id`),
   UNIQUE KEY `reporting_select` (`publication_id`(6),`zone_id`(6),`campaign_id`(6),`creative_id`(6),`network_id`(6),`date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_syslog` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_syslog` (
   `entry_id` int(11) NOT NULL auto_increment,
   `log_type` varchar(100) NOT NULL,
   `time_stamp` varchar(100) NOT NULL,
@@ -4948,7 +4953,7 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_syslog` (
   `details` varchar(100) NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_trafficrequests` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_trafficrequests` (
   `entry_id` int(11) NOT NULL auto_increment,
   `request_id` varchar(100) NOT NULL,
   `network_id` varchar(100) NOT NULL,
@@ -4977,14 +4982,14 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_trafficrequests` (
   `device_target` varchar(1) NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_trafficrequests_parameters` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_trafficrequests_parameters` (
   `entry_id` int(11) NOT NULL auto_increment,
   `request_id` varchar(100) NOT NULL,
   `parameter_id` varchar(100) NOT NULL,
   `parameter_value` varchar(100) NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_uaccounts` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_uaccounts` (
   `user_id` int(11) NOT NULL auto_increment,
   `email_address` varchar(100) NOT NULL,
   `pass_word` varchar(100) NOT NULL,
@@ -5007,17 +5012,17 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_uaccounts` (
   PRIMARY KEY  (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 ", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_user_groups` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_user_groups` (
   `entry_id` int(11) NOT NULL auto_increment,
   `group_name` varchar(100) NOT NULL,
   `group_description` longtext NOT NULL,
   `group_status` char(1) NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;", $maindb);
-mysql_query("INSERT INTO `md_user_groups` (`entry_id`, `group_name`, `group_description`, `group_status`) VALUES
+    mysql_query("INSERT INTO `md_user_groups` (`entry_id`, `group_name`, `group_description`, `group_status`) VALUES
 (1, 'Administrators', 'This is the Administrator User Group. Users in this group automatically have full administration permissions on the mAdserve ad server.', '1'),
 (2, 'Advertisers', 'This is the main Advertiser group. Users in this group can create & manage their own campaigns and can generate reports for campaigns they have originally created.', '1');", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_user_rights` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_user_rights` (
   `entry_id` int(11) NOT NULL auto_increment,
   `user_id` varchar(100) NOT NULL,
   `group_id` varchar(100) NOT NULL,
@@ -5037,9 +5042,9 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_user_rights` (
   `traffic_requests` varchar(1) NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("INSERT INTO `md_user_rights` (`entry_id`, `user_id`, `group_id`, `view_own_campaigns`, `view_all_campaigns`, `create_campaigns`, `view_publications`, `modify_publications`, `view_advertisers`, `modify_advertisers`, `ad_networks`, `campaign_reporting`, `own_campaign_reporting`, `publication_reporting`, `network_reporting`, `configuration`, `traffic_requests`) VALUES
+    mysql_query("INSERT INTO `md_user_rights` (`entry_id`, `user_id`, `group_id`, `view_own_campaigns`, `view_all_campaigns`, `create_campaigns`, `view_publications`, `modify_publications`, `view_advertisers`, `modify_advertisers`, `ad_networks`, `campaign_reporting`, `own_campaign_reporting`, `publication_reporting`, `network_reporting`, `configuration`, `traffic_requests`) VALUES
 (1, '', '2', '1', '0', '1', '0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0');", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_usessions` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_usessions` (
   `entry_id` int(11) NOT NULL auto_increment,
   `session_id` varchar(100) NOT NULL,
   `session_timeout` varchar(100) NOT NULL,
@@ -5051,7 +5056,7 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_usessions` (
   `date_created` varchar(100) NOT NULL,
   PRIMARY KEY  (`entry_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("CREATE TABLE IF NOT EXISTS `md_zones` (
+    mysql_query("CREATE TABLE IF NOT EXISTS `md_zones` (
   `entry_id` int(11) NOT NULL auto_increment,
   `publication_id` varchar(100) NOT NULL,
   `zone_hash` varchar(100) NOT NULL,
@@ -5073,42 +5078,41 @@ mysql_query("CREATE TABLE IF NOT EXISTS `md_zones` (
   PRIMARY KEY  (`entry_id`),
   KEY `publication_id` (`publication_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;", $maindb);
-mysql_query("INSERT INTO `md_syslog` (`entry_id`, `log_type`, `time_stamp`, `status`, `details`) VALUES (NULL, 'system_install', '".time()."', '1', '');", $maindb);
+    mysql_query("INSERT INTO `md_syslog` (`entry_id`, `log_type`, `time_stamp`, `status`, `details`) VALUES (NULL, 'system_install', '" . time() . "', '1', '');", $maindb);
 
 
-if ($data['mobfox_connect_type']==1){
-$mobfox_uid=$data['mf_user'];
-$mobfox_pass=md5($data['mf_pass']);
-}
-else if ($data['mobfox_connect_type']==2){
-$mobfox_uid=$data['mf_email'];
-$mobfox_pass=md5($data['mf_password']);	
-}
+    if ($data['mobfox_connect_type'] == 1) {
+        $mobfox_uid = $data['mf_user'];
+        $mobfox_pass = md5($data['mf_pass']);
+    } else if ($data['mobfox_connect_type'] == 2) {
+        $mobfox_uid = $data['mf_email'];
+        $mobfox_pass = md5($data['mf_password']);
+    }
 
-$madserve_udid=md5(uniqid(time()));
+    $madserve_udid = md5(uniqid(time()));
 
-mysql_query("INSERT INTO `md_configuration` (`entry_id`, `var_name`, `var_value`) VALUES
-(1, 'adserver_name', '".$mad_basic_configuration['server_name']."'),
+    mysql_query("INSERT INTO `md_configuration` (`entry_id`, `var_name`, `var_value`) VALUES
+(1, 'adserver_name', '" . $mad_basic_configuration['server_name'] . "'),
 (2, 'db_install_version', '2.0'),
 (3, 'api_key', 'e10adc3949ba59abbe56e057f20f883e'),
 (4, 'last_tafficrequest_id', '0'),
-(5, 'mobfox_uid', '".$mobfox_uid."'),
-(6, 'mobfox_password', '".$mobfox_pass."'),
+(5, 'mobfox_uid', '" . $mobfox_uid . "'),
+(6, 'mobfox_password', '" . $mobfox_pass . "'),
 (7, 'last_trafficrequest_update', ''),
 (8, 'last_limit_update', ''),
-(9, 'server_email', '".$mad_basic_configuration['admin_email']."'),
+(9, 'server_email', '" . $mad_basic_configuration['admin_email'] . "'),
 (10, 'last_mf_check', ''),
 (11, 'allow_statistical_info', '1'),
-(12, 'installation_id', '".$madserve_udid."'),
+(12, 'installation_id', '" . $madserve_udid . "'),
 (13, 'update_check', '1'),
 (14, 'default_creative_server', '1'),
 (15, 'last_pendingactions_exec', ''),
 (16, 'last_cron_job', '');", $maindb);
 
-mysql_query("INSERT INTO `md_uaccounts` ( `email_address`, `pass_word`, `account_status`, `account_type`, `first_name`, `last_name`, `creation_date`) VALUES
-('".strtolower($mad_basic_configuration['admin_email'])."', '".md5($mad_basic_configuration['admin_pass'])."', '1', '1', '".$mad_basic_configuration['admin_firstname']."', '".$mad_basic_configuration['admin_lastname']."', '".time()."');", $maindb);
+    mysql_query("INSERT INTO `md_uaccounts` ( `email_address`, `pass_word`, `account_status`, `account_type`, `first_name`, `last_name`, `creation_date`) VALUES
+('" . strtolower($mad_basic_configuration['admin_email']) . "', '" . md5($mad_basic_configuration['admin_pass']) . "', '1', '1', '" . $mad_basic_configuration['admin_firstname'] . "', '" . $mad_basic_configuration['admin_lastname'] . "', '" . time() . "');", $maindb);
 
-$configfile_content='
+    $configfile_content = '
 ;<?php exit; ?>
 ;*** DO NOT REMOVE THE LINE ABOVE ***
 ;------------------------------------------------------------------------------------------;
@@ -5124,12 +5128,12 @@ installed                           = true
 
 [database]
 type                                = mysql
-host                                = "'.$mad_db_configuration['db_host'].'"
+host                                = "' . $mad_db_configuration['db_host'] . '"
 socket                              =
 port                                =
-username                            = "'.$mad_db_configuration['db_user'].'"
-password                            = "'.$mad_db_configuration['db_pass'].'"
-name                                = "'.$mad_db_configuration['db_name'].'"
+username                            = "' . $mad_db_configuration['db_user'] . '"
+password                            = "' . $mad_db_configuration['db_pass'] . '"
+name                                = "' . $mad_db_configuration['db_name'] . '"
 
 [reportingdatabase]
 useseparatereportingdatabase     = false
@@ -5142,53 +5146,55 @@ password                            =
 name                                =
 ';
 
-if (!write_config(MAD_PATH . '/conf/main.config.php', $configfile_content)){
-echo "Fatal Error. Unable to write into /conf/ directory. Please check directory permissions and start over.";
-exit;	
+    if (!write_config(MAD_PATH . '/conf/main.config.php', $configfile_content)) {
+        echo "Fatal Error. Unable to write into /conf/ directory. Please check directory permissions and start over.";
+        exit;
+    }
+
+
+    delete_config(MAD_PATH . '/conf/INSTALLTEMP_MAINCONFIG');
+    delete_config(MAD_PATH . '/conf/INSTALLTEMP_DBCONFIG');
+
+
+    if (!fopen(MAD_PATH . '/conf/INSTALLED', 'w')) {
+        global $errormessage;
+        $errormessage = 'Could not write to /conf/ directory. Installation failed, please re-start installation';
+        return false;
+    }
+
+    return true;
+}
+
+function delete_config($file)
+{
+    if (unlink($file)) {
+        return true;
+    }
+    return false;
 }
 
 
-delete_config(MAD_PATH . '/conf/INSTALLTEMP_MAINCONFIG');
-delete_config(MAD_PATH . '/conf/INSTALLTEMP_DBCONFIG');
-
-	
-if (!fopen(MAD_PATH . '/conf/INSTALLED', 'w')){
-global $errormessage;
-$errormessage='Could not write to /conf/ directory. Installation failed, please re-start installation';
-return false;	
-}
-	
-return true;	
+function read_config($file)
+{
+    error_reporting(0);
+    if (!$fh = fopen($file, 'r')) {
+        return false;
+    }
+    $theData = fread($fh, filesize($file));
+    fclose($fh);
+    return $theData;
 }
 
-function delete_config($file){
-if (unlink($file)){
-	return true; }
-	return false;
+function write_config($file, $content)
+{
+    if (!$fh = fopen($file, 'w')) {
+        return false;
+    }
+    if (!fwrite($fh, $content)) {
+        return false;
+    }
+    return true;
 }
-
-
-
-function read_config($file){
-error_reporting(0);
-if (!$fh = fopen($file, 'r')){
-return false;
-}
-$theData = fread($fh, filesize($file));
-fclose($fh);
-return $theData;
-}
-
-function write_config($file, $content){
-if (!$fh = fopen($file, 'w')){
-return false;	
-}
-if (!fwrite($fh, $content)){
-return false;	
-}
-return true;
-}
-
 
 
 ?>
