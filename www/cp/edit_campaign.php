@@ -21,7 +21,7 @@ exit;
 
 global $current_action;
 $current_action='edit';
-
+$_GET['id'] = (int)$_GET['id'];
 if (isset($_POST['update'])){
 if (do_edit('campaign', $_POST, $_GET['id'])){
 $edited=1;

@@ -50,7 +50,7 @@ $successmessage='Your ad units have successfully been updated.';
 	
 }
 
-
+$_GET['id'] = (int)$_GET['id'];
 $campaign_detail=get_campaign_detail($_GET['id']);
 ?>
 <script type="text/javascript" language="javascript">

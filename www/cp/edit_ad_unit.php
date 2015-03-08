@@ -20,7 +20,7 @@ exit;
 
 global $current_action;
 $current_action='edit';
-
+$_GET['id'] = (int)$_GET['id'];
 if (isset($_POST['update'])){
 if (do_edit('adunit', $_POST, $_GET['id'])){
 global $edited;
