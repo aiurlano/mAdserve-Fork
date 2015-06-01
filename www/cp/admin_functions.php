@@ -1,5 +1,5 @@
 <?php
-error_reporting(0);
+error_reporting(1);
 global $edited;
 global $updated;
 if (!isset($mad_install_active)) {
@@ -5206,10 +5206,11 @@ function execute()
 
     }
 
-    $time_since_last_tr = time() - getconfig_var('last_trafficrequest_update');
-    if ($time_since_last_tr >= MAD_TRCHECK_INTERVAL_DASHBOARD or !is_numeric(getconfig_var('last_trafficrequest_update'))) {
-        update_traffic_requests();
-    }
+//    removing all madserve.org references since it's expired
+//    $time_since_last_tr = time() - getconfig_var('last_trafficrequest_update');
+//    if ($time_since_last_tr >= MAD_TRCHECK_INTERVAL_DASHBOARD or !is_numeric(getconfig_var('last_trafficrequest_update'))) {
+//        update_traffic_requests();
+//    }
 
     $time_since_last_pending_exec = time() - getconfig_var('last_pendingactions_exec');
     if ($time_since_last_pending_exec >= MAD_ACTION_EXEC_INTERVAL_DASHBOARD or !is_numeric(getconfig_var('last_pendingactions_exec'))) {
