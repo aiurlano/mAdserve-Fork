@@ -1,5 +1,5 @@
 <?php
-error_reporting(1);
+error_reporting(0);
 global $edited;
 global $updated;
 if (!isset($mad_install_active)) {
