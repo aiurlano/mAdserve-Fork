@@ -485,6 +485,15 @@ require_once MAD_PATH . '/www/cp/templates/header_i.tpl.php';
                                                         account</em></label>
                                             </div>
 
+                                            <div id="nomobfoxoptiobutton" class="field">
+                                                <input type="radio"
+                                                       onclick="document.getElementById('mobfox_signin').style.display='none'; document.getElementById('mobfox_signup').style.display='none';"
+                                                       name="mobfox_connect_type"
+                                                       <?php if (isset ($_POST['mobfox_connect_type']) && $_POST['mobfox_connect_type'] == 3){ ?>checked="checked"<?php } ?>
+                                                       id="mobfox_three" value="3"/>
+                                                <label for="mobfox_three"><em>Do not create a MobFox.com account at this time</em></label>
+                                            </div>
+
                                         </div>
 
                                         <div id="mobfox_signin"

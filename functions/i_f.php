@@ -143,7 +143,7 @@ function verify_db_config($data)
 function check_mf($data)
 {
 
-    if (!isset($data['mobfox_connect_type']) or ($data['mobfox_connect_type'] != 1 && $data['mobfox_connect_type'] != 2)) {
+    if (!isset($data['mobfox_connect_type']) or ($data['mobfox_connect_type'] != 1 && $data['mobfox_connect_type'] != 2 && $data['mobfox_connect_type'] != 3)) {
         global $errormessage;
         $errormessage = "Please tell us if you would like to use your existing account for MobFox:Connect, or if you'd like to create a new one.";
         global $editdata;
